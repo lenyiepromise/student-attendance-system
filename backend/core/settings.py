@@ -1,6 +1,7 @@
 # backend/core/settings.py
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +51,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'api', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -61,19 +62,18 @@ TEMPLATES = [
             ],
         },
     },
-] # <-- THIS CLOSING BRACKET WAS THE CAUSE OF THE ERROR
+]
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# --- CONFIGURE YOUR DATABASE ---
-# IMPORTANT: Make sure you have created a database named 'attendance_db' in MySQL
+# --- CONFIGURE DATABASE ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'attendance_db',
-        'USER': 'root',               # Your MySQL username (often 'root')
-        'PASSWORD': 'Baridakara#1',                # Your MySQL password (leave blank if you have none)
+        'USER': 'root',            
+        'PASSWORD': 'Baridakara#1',
         'HOST': 'localhost',
         'PORT': '3306',
     }
