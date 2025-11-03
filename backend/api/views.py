@@ -10,6 +10,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count, Q
 from django.db.models.functions import TruncDay
+from django.shortcuts import render
 
 class ListLecturerCourses(APIView):
     permission_classes = [IsAuthenticated]
@@ -197,3 +198,56 @@ class DailyReportView(APIView):
             return Response({"error": f"Course with code '{course_code}' not found."}, status=404)
         except Exception as e:
             return Response({"error": f"An unexpected server error occurred: {str(e)}"}, status=500)
+        
+        # --- NEW VIEW FOR THE STUDENT PORTAL ---
+    def student_portal_view(request):
+        student = None
+        error = None
+        attendance_report = []
+
+        if request.method == "POST":
+            matric_no = request.POST.get("matric_no", "").strip()
+            if not matric_no:
+                error = "Please enter a matriculation number."
+            else:
+                try:
+                    # 1. Find the student
+                    student = Student.objects.get(matric_no=matric_no)
+                    
+                    # 2. Calculate their attendance report
+                    # Get all courses the student has attended at least once
+                    attended_courses = Course.objects.filter(attendancerecord__student=student).distinct()
+
+                    for course in attended_courses:
+                        # For each course, find total unique lecture days
+                        total_lecture_days = AttendanceRecord.objects.filter(
+                            course=course
+                        ).annotate(day=TruncDay('timestamp')).values('day').distinct().count()
+
+                        # Find how many of those days this student attended
+                        student_attended_days = AttendanceRecord.objects.filter(
+                            course=course,
+                            student=student
+                        ).annotate(day=TruncDay('timestamp')).values('day').distinct().count()
+                        
+                        # Calculate percentage
+                        percentage = (student_attended_days / total_lecture_days) * 100 if total_lecture_days > 0 else 0
+                        
+                        attendance_report.append({
+                            'course_code': course.course_code,
+                            'course_title': course.course_title,
+                            'attended_days': student_attended_days,
+                            'total_days': total_lecture_days,
+                            'percentage': round(percentage)
+                        })
+
+                except Student.DoesNotExist:
+                    error = f"No student found with matriculation number: {matric_no}"
+
+        # Render an HTML page and pass all the necessary data to it
+        context = {
+            'student': student,
+            'error': error,
+            'attendance_report': attendance_report
+        }
+        return render(request, 'student_portal.html', context)

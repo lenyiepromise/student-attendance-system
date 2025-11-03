@@ -1,11 +1,20 @@
-# backend/api/urls.py
+from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
-from django.urls import path
-from .views import ListLecturerCourses, RecordAttendanceView, AttendanceReportView, DailyReportView
+# Import our new view
+from api.views import student_portal_view 
 
 urlpatterns = [
-    path('courses/', ListLecturerCourses.as_view(), name='lecturer-courses'),
-    path('record-attendance/', RecordAttendanceView.as_view(), name='record-attendance'),
-    path('report/summary/', AttendanceReportView.as_view(), name='attendance-summary-report'), 
-    path('report/daily/', DailyReportView.as_view(), name='attendance-daily-report'), 
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    # URL for the student portal
+    path('student-portal/', student_portal_view, name='student-portal'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
