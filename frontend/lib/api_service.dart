@@ -8,7 +8,7 @@ class ApiService {
   // IMPORTANT: For Windows desktop app, 127.0.0.1 is correct.
   // For an Android Emulator, use http://10.0.2.2:8000/api
   // For a physical phone, find your computer's IP address (e.g., http://192.168.1.10:8000/api)
-  final String _baseUrl = "http://192.168.184.89:8000/api";
+  final String _baseUrl = "http://127.0.0.1:8000/api";
 
   // --- Login Method ---
   Future<String?> login(String username, String password) async {
