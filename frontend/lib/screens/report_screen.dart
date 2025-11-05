@@ -100,7 +100,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     width: double.infinity,
                     child: DataTable(
                       columnSpacing: 20,
-                      headingRowColor: MaterialStateProperty.all(Colors.grey.shade200),
+                      headingRowColor: WidgetStateProperty.all(Colors.grey.shade200),
                       columns: const [
                         DataColumn(label: Text('Student Name', style: TextStyle(fontWeight: FontWeight.bold))),
                         DataColumn(label: Text('Matric No', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -115,7 +115,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           DataCell(Text(studentData['attended_days'].toString())),
                           DataCell(
                             Text(
-                              '${percentage}%',
+                              '$percentage%',
                               style: TextStyle(
                                 color: percentage >= 75 ? Colors.green.shade800 : Colors.red.shade800,
                                 fontWeight: FontWeight.bold,

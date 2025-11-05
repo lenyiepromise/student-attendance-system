@@ -6,6 +6,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from api.views import student_portal_view
 
+# --- ADMIN SITE CUSTOMIZATION ---
+admin.site.site_header = "Student Attendance Admin"
+admin.site.site_title = "Attendance Admin Portal"
+admin.site.index_title = "Welcome to the Attendance Administration Portal"
+# --------------------------------
 
 urlpatterns = [
     path('admin/', admin.site.urls),
